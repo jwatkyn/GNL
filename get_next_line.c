@@ -6,7 +6,7 @@
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/28 08:38:30 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 08:45:45 by jwatkyn          ###   ########.fr       */
+/*   Updated: 2018/05/28 15:01:33 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ static void	ft_getfile(int fd, t_list *fdlist)
 	while (((t_list*)fdlist->content)->fd != fd && fdlist->next)
 		if (fdlist->next)
 			flist = flist->next;
-	if (((t_list*)fdlist->content)->fd != fd || !fdlist)
+	if (((t_list*)fdlist->content)->fd != fd)
 	{
 		file = (t_line*)malloc(sizeof(t_line));
-		file = {fd, ft_strnew(BUFF_SIZE), BUFF_SIZE, 0, 2};
+		file = {fd, ft_strnew(BUFF_SIZE), 0, 0, 2};
 		fdlist->next = ft_strnew(file, sizeof(t_list));
 		fdlist = fdlist->next;
 		fdlist->content = file
@@ -38,23 +38,37 @@ static void	ft_getfile(int fd, t_list *fdlist)
 
 static t_line	*ft_getline(t_line *file, int fd)
 {
+	char	*line
 	char	*temp;
-	int	i;
+	int		i;
 
 	i = 0;
+	file->len = 0;
+	line = "";
 	if (file->linepos == 0)
 		file->ret = read(file->fd, file->line_buf, BUFF_SIZE);
-	while (temp[i] = ft_char(file) != '\n' && ft_char(file) != 0)
+	temp = (char*)malloc(sizeof(char) * BUFF_SIZE);
+	while (temp[i++] = ft_char(file) != '\n' && ft_char(file) != 0)
 	{
-		i++;
 		file->linepos = file->linepos + 1;
+		file->len = file->len + 1;
+		if (file->linepos == BUFF_SIZE)
+		{
+			file->linepos = 1;
+			file->ret = read(file->fd, file->line_buf, BUFF_SIZE);
+			if (file->ret == 0)
+				break ;
+			line = ft_strmerge(line, temp);
+			temp = (char*)malloc(sizeof(char) * BUFF_SIZE);
+		}
 	}
-	return (temp);	
+	return (line);	
 }
 
 static char	*ft_char(t_line *file)
 {
-
+	file->linepos = file->linepos + 1;
+	file->len = file->len + 1;
 }
 
 static void	*ft_cleanfile(t_line *file)
@@ -73,7 +87,7 @@ int		get_next_line(const int fd, char **line)
 	if (!fdlist)
 	{
 		file = (t_list*)malloc(sizeof(t_list));
-		file = {fd, ft_strnew(BUFF_SIZE), BUFF_SIZE, 0, 2};
+		file = {fd, ft_strnew(BUFF_SIZE), 0, 0, 2};
 		fdlist = ft_lstnew(file, sizeof(t_line));
 	}
 
