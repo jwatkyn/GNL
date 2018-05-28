@@ -1,29 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/28 08:39:57 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 09:12:12 by jwatkyn          ###   ########.fr       */
+/*   Created: 2018/05/14 15:53:15 by jwatkyn           #+#    #+#             */
+/*   Updated: 2018/05/21 07:51:38 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include <unistd.h>
-# include "libft.h"
+#include "libft.h"
 
-# define BUFF_SIZE 32
-
-typedef struct	s_list
+size_t	ft_strlen(const char *s)
 {
-	int		fd;
-	char	*line_buf;
-	size_t	len;
-	size_t	linepos;
-	int		ret;
-}				t_line;
+	size_t len;
 
-#endif
+	len = 0;
+	while (*s)
+	{
+		len++;
+		s++;
+	}
+	return (len);
+}

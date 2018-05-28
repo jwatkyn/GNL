@@ -1,29 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/28 08:39:57 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 09:12:12 by jwatkyn          ###   ########.fr       */
+/*   Created: 2018/05/18 07:48:18 by jwatkyn           #+#    #+#             */
+/*   Updated: 2018/05/21 08:45:56 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include <unistd.h>
-# include "libft.h"
+#include "libft.h"
 
-# define BUFF_SIZE 32
-
-typedef struct	s_list
+char	*ft_strmap(char const *s, char (*f)(char))
 {
-	int		fd;
-	char	*line_buf;
-	size_t	len;
-	size_t	linepos;
-	int		ret;
-}				t_line;
+	char	*str;
+	size_t	i;
 
-#endif
+	if (!s)
+		return (NULL);
+	if (!(str = ft_strnew(ft_strlen(s))))
+		return (NULL);
+	i = 0;
+	while (s[i])
+	{
+		str[i] = f(s[i]);
+		i++;
+	}
+	return (str);
+}

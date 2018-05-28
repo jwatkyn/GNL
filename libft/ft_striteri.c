@@ -1,29 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_striteri.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/28 08:39:57 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 09:12:12 by jwatkyn          ###   ########.fr       */
+/*   Created: 2018/05/18 07:48:08 by jwatkyn           #+#    #+#             */
+/*   Updated: 2018/05/24 22:22:30 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include <unistd.h>
-# include "libft.h"
+#include "libft.h"
 
-# define BUFF_SIZE 32
-
-typedef struct	s_list
+void	ft_striteri(char *s, void (*f)(unsigned int, char *))
 {
-	int		fd;
-	char	*line_buf;
-	size_t	len;
-	size_t	linepos;
-	int		ret;
-}				t_line;
+	size_t i;
 
-#endif
+	i = 0;
+	if (!s || !f)
+		return ;
+	while (*s)
+		f(i++, s++);
+}

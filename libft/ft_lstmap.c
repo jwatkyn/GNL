@@ -1,29 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/28 08:39:57 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 09:12:12 by jwatkyn          ###   ########.fr       */
+/*   Created: 2018/05/21 08:05:36 by jwatkyn           #+#    #+#             */
+/*   Updated: 2018/05/21 08:05:38 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include <unistd.h>
-# include "libft.h"
+#include "libft.h"
 
-# define BUFF_SIZE 32
-
-typedef struct	s_list
+t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem))
 {
-	int		fd;
-	char	*line_buf;
-	size_t	len;
-	size_t	linepos;
-	int		ret;
-}				t_line;
+	t_list	*new;
+	t_list	*crt;
 
-#endif
+	crt = (*f)(lst);
+	if (!crt)
+		return (NULL);
+	new = crt;
+	lst = lst->next;
+	while (lst)
+	{
+		crt->next = (*f)(lst);
+		if (crt->next == NULL)
+			return (NULL);
+		crt = crt->next;
+		lst = lst->next;
+	}
+	return (new);
+}

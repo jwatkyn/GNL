@@ -1,13 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/05/28 08:38:30 by jwatkyn           #+#    #+#             */
+/*   Updated: 2018/05/28 08:45:45 by jwatkyn          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include "get_next_line.h"
-
-{
-	int fd;
-	char *line_buf;
-	size_t len;
-	size_t linepos;
-	int ret;
-} fdlist
 
 static void	ft_getfile(int fd, t_list *fdlist)
 {
@@ -44,10 +48,11 @@ static t_line	*ft_getline(t_line *file, int fd)
 	{
 		i++;
 		file->linepos = file->linepos + 1;
-		
+	}
+	return (temp);	
 }
 
-static char	*ft_linefin(t_line *file)
+static char	*ft_char(t_line *file)
 {
 
 }
@@ -73,7 +78,7 @@ int		get_next_line(const int fd, char **line)
 	}
 
 	file = ft_getfile(fd, fdlist);
-	ft_getline(file, fd);
+	*line = ft_getline(file, fd);
 	ft_cleanfile(&fdlist);
 	return (file->ret);
 }

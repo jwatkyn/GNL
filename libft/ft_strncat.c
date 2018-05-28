@@ -1,29 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strncat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/28 08:39:57 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 09:12:12 by jwatkyn          ###   ########.fr       */
+/*   Created: 2018/05/17 10:51:48 by jwatkyn           #+#    #+#             */
+/*   Updated: 2018/05/23 10:13:16 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
-# include <unistd.h>
-# include "libft.h"
+#include "libft.h"
 
-# define BUFF_SIZE 32
-
-typedef struct	s_list
+char	*ft_strncat(char *dest, const char *src, size_t n)
 {
-	int		fd;
-	char	*line_buf;
-	size_t	len;
-	size_t	linepos;
-	int		ret;
-}				t_line;
+	size_t counter;
+	size_t i;
 
-#endif
+	counter = 0;
+	i = 0;
+	while (dest[i] != '\0')
+	{
+		i++;
+	}
+	while (*src && counter < n)
+	{
+		dest[i] = *src;
+		i++;
+		src++;
+		counter++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
