@@ -15,14 +15,14 @@
 # include <unistd.h>
 # include "libft.h"
 
-# define BUFF_SIZE 36
+# define BUFF_SIZE 34
 
 int				get_next_line(const int fd, char **line);
 
 typedef struct	s_line
 {
 	int		fd;
-	char	*line_buf;
+	char	*line;
 	size_t	len;
 	size_t	linepos;
 	int		ret;
