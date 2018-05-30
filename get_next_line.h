@@ -6,7 +6,7 @@
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/28 08:39:57 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 10:05:04 by jwatkyn          ###   ########.fr       */
+/*   Updated: 2018/05/30 15:51:57 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 # include <unistd.h>
 # include "libft.h"
 
-# define BUFF_SIZE 32
+# define BUFF_SIZE 36
+
+int				get_next_line(const int fd, char **line);
 
 typedef struct	s_line
 {

@@ -6,93 +6,135 @@
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/28 08:38:30 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/28 15:01:33 by jwatkyn          ###   ########.fr       */
+/*   Updated: 2018/05/30 15:52:02 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "get_next_line.h"
+#include <stdio.h>
 
-static void	ft_getfile(int fd, t_list *fdlist)
+static t_line	*ft_getfile(int fd, t_list *fdlist)
 {
-	t_list	*file;
-
-	while (((t_list*)fdlist->content)->fd != fd && fdlist->next)
+	t_line	*file;
+	
+	while (((t_line*)(fdlist->content))->fd != fd && fdlist->next)
 		if (fdlist->next)
-			flist = flist->next;
-	if (((t_list*)fdlist->content)->fd != fd)
+			fdlist = fdlist->next;
+	if (((t_line*)fdlist->content)->fd != fd)
 	{
 		file = (t_line*)malloc(sizeof(t_line));
-		file = {fd, ft_strnew(BUFF_SIZE), 0, 0, 2};
-		fdlist->next = ft_strnew(file, sizeof(t_list));
+		*file = (t_line){fd, ft_strnew(BUFF_SIZE), 0, 0, 2};
+		fdlist->next = ft_lstnew(file, sizeof(t_line));
 		fdlist = fdlist->next;
-		fdlist->content = file
+		fdlist->content = file;
 	}
-	if (file->ret = read(file->fd, NULL, 0) < 0)
+	else
+		file = fdlist->content;
+	if ((file->ret = read(file->fd, NULL, 0)) < 0)
 		;
 	else
 		file = fdlist->content;
 	return (file);
-	
 }
 
-static t_line	*ft_getline(t_line *file, int fd)
+static char	ft_char(t_line *file)
 {
-	char	*line
-	char	*temp;
-	int		i;
+	char	c;
 
+	if ((int)(file->linepos) == file->ret)
+	{
+			file->linepos = 0;
+			ft_strdel(&(file->line_buf));
+			file->line_buf = ft_strnew(BUFF_SIZE);
+			file->ret = read(file->fd, file->line_buf, BUFF_SIZE);
+			printf("%d\n", file->ret);
+			printf("%s\n", file->line_buf);
+	}
+	++file->linepos
+	file->len = file->len + 1;
+	return (file->line_buf[file->linepos - 1]);
+}
+
+static void	ft_cleanfile(t_list **fdlist)
+{
+	t_line	*file;
+	t_list	*temp;
+	t_list	*temp2;
+
+	temp = *fdlist;
+	while (temp->next->next && ((t_line*)(temp->next->content))->ret == BUFF_SIZE)
+		temp = temp->next;
+	temp2 = temp->next;
+	file = temp2->content;
+	temp->next = temp2->next;
+	if (file->ret < BUFF_SIZE)
+	{
+		ft_strdel(&(file->line_buf));
+		free(file);
+		free(temp2);
+	}
+}
+
+static char		*ft_getline(t_line *file)
+{
+	char	*line;
+	char	*ret;
+	size_t	i;
+	size_t	end;
+
+	end = 32;
 	i = 0;
-	file->len = 0;
-	line = "";
 	if (file->linepos == 0)
 		file->ret = read(file->fd, file->line_buf, BUFF_SIZE);
-	temp = (char*)malloc(sizeof(char) * BUFF_SIZE);
-	while (temp[i++] = ft_char(file) != '\n' && ft_char(file) != 0)
+	ret = ft_strnew(end);
+	while ((ret[i] = ft_char(file)) != '\n' && ret[i] > 0)
 	{
-		file->linepos = file->linepos + 1;
-		file->len = file->len + 1;
-		if (file->linepos == BUFF_SIZE)
+		i++;
+		printf("d");
+		if (i == end - 1)
 		{
-			file->linepos = 1;
-			file->ret = read(file->fd, file->line_buf, BUFF_SIZE);
-			if (file->ret == 0)
-				break ;
-			line = ft_strmerge(line, temp);
-			temp = (char*)malloc(sizeof(char) * BUFF_SIZE);
+			end = end + end;
+			line = ft_strnew(end);
+			ft_strcpy(line, ret);
+			ft_strdel(&ret);
+			ret = line;
 		}
+		printf("%c - %zu ", ret[i - 1], i);
+		printf("%zu \n", ft_strlen(ret));
+		//printf("%s\n", line);
 	}
-	return (line);	
+	if (ret[i] == '\n')
+		ret[i] = '\0';
+	ft_strdel(&line);
+	return (ret);	
 }
 
-static char	*ft_char(t_line *file)
-{
-	file->linepos = file->linepos + 1;
-	file->len = file->len + 1;
-}
-
-static void	*ft_cleanfile(t_line *file)
-{
-
-}
 
 int		get_next_line(const int fd, char **line)
 {
-	char		*temp;
-	t_line		*file;
+	t_line			*file;
 	static t_list	*fdlist;
+	int				ret;
+
 	
 	if (fd < 0 || !line)
 		return (-1);
 	if (!fdlist)
 	{
-		file = (t_list*)malloc(sizeof(t_list));
-		file = {fd, ft_strnew(BUFF_SIZE), 0, 0, 2};
+		
+		file = (t_line*)malloc(sizeof(t_line));
+		*file = (t_line){fd, ft_strnew(BUFF_SIZE), 0, 0, 2};
 		fdlist = ft_lstnew(file, sizeof(t_line));
+		ft_memdel((void**)&file);
 	}
-
-	file = ft_getfile(fd, fdlist);
-	*line = ft_getline(file, fd);
+	file = ft_getfile(fd, fdlist);	
+	*line = ft_getline(file);
+	ret = file->ret;
+	printf("%s", *line);
 	ft_cleanfile(&fdlist);
-	return (file->ret);
+	if (ret == BUFF_SIZE)
+		return (1);
+	else
+		return (0);
 }
