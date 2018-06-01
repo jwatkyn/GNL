@@ -1,131 +1,59 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line1.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/05/28 08:38:30 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/05/31 10:39:55 by jwatkyn          ###   ########.fr       */
+/*   Created: 2018/06/01 14:20:59 by jwatkyn           #+#    #+#             */
+/*   Updated: 2018/06/01 15:36:37 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "get_next_line.h"
-#include <stdio.h>
+#include "libft.h"
 
-static t_line	*ft_getfile(int fd, t_list *fdlist)
+static int	ft_gnl(char buf[BUFF_SIZE + 1], char **l, int *r, const int fd)
 {
-	t_line	*file;
+	int	i;
+	int j;
 
-	while (((t_line*)(fdlist->content))->fd != fd && fdlist->next)
-		if (fdlist->next)
-			fdlist = fdlist->next;
-	if (((t_line*)fdlist->content)->fd != fd)
+	i = -1;
+	while (*r > 0)
 	{
-		file = (t_line*)ft_memalloc(sizeof(t_line));
-		*file = (t_line){fd, ft_strnew(BUFF_SIZE), 0, 0, 1};
-		fdlist->next = ft_lstnew(file, sizeof(t_line));
-		file = (t_line*)fdlist->next->content;
-	}
-	else
-		file = (t_line*)fdlist->content;
-	if (read(file->fd, NULL, 0) < 0)
-		file->ret = -1;
-	return (file);
-}
-
-static char		ft_char(t_line *file)
-{
-	int ret;
-
-	if (file->linepos == file->len)
-	{
-
-		printf("gnl: %s\n", file->line);
-		ret = read(file->fd, file->line, BUFF_SIZE);
-		printf("gnl: %s\n", file->line);
-		if (ret <= 0)
+		j = 0;
+		while (j < *r)
 		{
-			file->ret = ret;
-			return (ret);
+			(*l)[++i] = buf[j++];
+			if ((*l)[i] == '\n')
+			{
+				ft_strcpy(&buf[0], &buf[j]);
+				(*l)[i] = '\0';
+				return (1);
+			}
 		}
-		file->len = ret;
-		file->linepos = 0;
+		*r = read(fd, &buf[0], BUFF_SIZE);
+		buf[*r] = 0;
 	}
-	++file->linepos;
-	return (file->line[file->linepos - 1]);
+	return (0);
 }
 
-static void		ft_cleanfile(t_list **fdlist)
+int			get_next_line(const int fd, char **line)
 {
-	t_list	*current;
-	t_list	*next;
-	t_line	*file;
-
-	current = *fdlist;
-	while (current)
-	{
-		file = (t_line*)current->content;
-		next = current->next;
-		if (file->ret <= 0)
-		{
-			if (current == *fdlist)
-				*fdlist = next;
-			ft_strdel(&file->line);
-		}
-		current = next;
-	}
-}
-
-static void		ft_getline(t_line *file, char **buf)
-{
-	char	*line;
-	char	*ret;
-	size_t	i;
-	size_t	end;
-
-	end = 10;
-	i = 0;
-	ret = ft_strnew(end);
-	while ((ret[i] = ft_char(file)) != '\n' && ret[i] > 0)
-	{
-		i++;
-		if (i == end - 1)
-		{
-			end *= 2;
-			line = ft_strnew(end);
-			ft_strcpy(line, ret);
-			ft_strdel(&ret);
-			ret = line;
-		}
-	}
-	if (ret[i] == '\n')
-		ret[i] = '\0';
-	*buf = ret;
-}
-
-int				get_next_line(const int fd, char **line)
-{
-	t_line			*file;
-	static t_list	*fdlist;
+	static char		buf[1000][BUFF_SIZE + 1];
 	int				ret;
+	int				i;
 
-	if (fd < 0 || !line)
+	if (!line || fd < 0)
 		return (-1);
-	if (!fdlist)
-	{
-		file = (t_line*)malloc(sizeof(t_line));
-		*file = (t_line){fd, ft_strnew(BUFF_SIZE), 0, 0, 1};
-		fdlist = ft_lstnew(file, sizeof(t_line));
-		ft_memdel((void**)&file);
-	}
-	file = ft_getfile(fd, fdlist);
-	ft_getline(file, line);
-	if (file->ret >= 0 && ft_strlen(*line))
-		ret = 1;
-	else
-		ret = file->ret;
-	ft_cleanfile(&fdlist);
+	if (!(*line = ft_strnew(52001)))
+		return (-1);
+	ret = ft_strlen(&buf[fd][0]);
+	if (!ret)
+		ret = read(fd, &buf[fd][0], BUFF_SIZE);
+	buf[fd][ret + 1] = 0;
+	i = ft_gnl((char*)(buf[fd]), &*line, &ret, fd);
+	if (ft_strlen(*line) > 0 || i == 1)
+		return (1);
 	return (ret);
 }
