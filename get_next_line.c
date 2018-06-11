@@ -6,7 +6,7 @@
 /*   By: jwatkyn <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/01 14:20:59 by jwatkyn           #+#    #+#             */
-/*   Updated: 2018/06/06 11:40:56 by jwatkyn          ###   ########.fr       */
+/*   Updated: 2018/06/11 12:31:38 by jwatkyn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ static int	ft_gnl(char buf[BUFF_SIZE + 1], char **l, int *r, const int fd)
 
 int			get_next_line(const int fd, char **line)
 {
-	static char		buf[INT_MAX][BUFF_SIZE + 1];
+	static char		buf[1000][BUFF_SIZE + 1];
 	int				ret;
 	int				i;
 
-	if (line == NULL || fd < 0 || read(fd, buff, 0) < 0)
+	if (!line || fd < 0 || (read(fd, NULL, 0) < 0))
 		return (-1);
-	if (!(*line = (char *)malloc(5200000)))
+	if (!(*line = ft_strnew(52001)))
 		return (-1);
 	ret = ft_strlen(&buf[fd][0]);
 	if (!ret)
